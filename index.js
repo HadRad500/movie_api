@@ -1,3 +1,94 @@
+const express = require("express");
+  morgan = require("morgan");
+
+const app = express();
+
+let topMovies = [
+  {
+    title: "Get Shorty"
+  },
+  {
+    title: "Wall-E"
+  },
+  {
+    title: "Dune"
+  },
+  {
+    title: "The Batman"
+  },
+  {
+    title: "Sherlock Holmes"
+  },
+  {
+    title: "The Arrivals"
+  },
+  {
+    title: "Odd Thomas"
+  },
+  {
+    title: "Karate Kid"
+  },
+  {
+    title: "Extraction"
+  },
+  {
+    title: "John Wick"
+  },
+]
+
+app.use (morgan('common'));
+
+app.get('/movies', (req, res) => {
+  res.json(topMovies);
+});
+
+app.get('/', (req, res) => {                  
+  res.send('Welcome to my favorite movie list!') //{ root: __dirname });
+});
+
+app.use('/documentation.html', express.static('public'));
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+
+app.listen(8080, () => {
+  console.log('Your app is listening on port 8080.');
+});     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 const http = require('http'),
 url = require('url'),
 fs = require('fs');
@@ -25,4 +116,4 @@ http.createServer((request, response) => {
   response.end('Hello Node!\n');
 }).listen(8080);
 
-console.log('My first Node test server is running on Port 8080.');
+console.log('My first Node test server is running on Port 8080.');*/
