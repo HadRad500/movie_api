@@ -9,9 +9,74 @@
     <link rel="icon" href="./favicon.ico" type="image/x-icon">
   </head>
   <body>
-    <main>
-        <h1>Movie Website</h1>  
-    </main>
+    <h1>
+      <b>Movie API</b>
+      Goal: To build the server-side component of a “movies” web application.
+      The web application will provide users with access to information about
+      different movies, directors, and genres. Users will be able to sign up,
+      update their personal information, and create a list of their favorite
+      movies
+    </h1>
+
+    <h2>URL endpoints</h2>
+
+    <h3>GET /movies Return a list of ALL movies to the user</h3>
+    <h3>
+      GET /movies/:title Return data (description, genre, director, image URL,
+      whether it is featured or not) about a single movie by title to the user
+    </h3>
+
+    <h3>
+      GET /movies/genres/:genreName Return data about a genre (description) by
+      name/title (e.g., “Thriller”)
+    </h3>
+    <h3>
+      GET /movies/:directors Return data about a director (bio, birth year,
+      death year) by name.
+    </h3>
+
+    <h3>GET /users Returns a list of all users and their details</h3>
+    <h3>POST /users Allow new users to register</h3>
+    <p>example request body, in json:</p>
+    <p>
+      { "username":"testuser","password": "12345", "email":
+      "testemail@email.com", "birthday":"1990-01-27" }
+    </p>
+
+    <p>Larry King:</p>
+    <p>
+      { username: { type: String, required: true }, password: { type: String,
+      required: true }, email: { type: String, required: true }, birthday: Date,
+      favoriteMovies: [{ type: larry.king.Types.ObjectId, ref: "movies" }],
+      }
+    </p>
+    <p>Format of the response data: json. Returns newly added user.</p>
+
+    <h3>
+      PUT /users/:username Allow users to update their user info by username
+    </h3>
+    <p>example request body, in json:</p>
+    <p>
+      { "username":"updateduser","password": "12345", "email":
+      "testemail@email.com", "birthday":"1990-01-27" }
+    </p>
+    <p>No minimum number of properties that need to be passed.</p>
+    <p>Format of the response data: json. Returns newly updated user</p>
+
+    <h3>
+      POST /users/:username/movies/:movieID Allow users to add a movie to their
+      list of favorites.
+    </h3>
+    <p>Format of the response data: json. Returns newly updated user.</p>
+
+    <h3>
+      DELETE /users/:username/movies/:movieID Allow users to remove a movie from
+      their list of favorites. Format of the response data: json. Returns newly
+      updated user.
+    </h3>
+    <h3>DELETE users/:username Allow existing users to deregister</h3>
+    <p>returns text saying which user was deleted "user ___ was removed"</p>
+    
 	<script src="index.js"></script>
   </body>
 </html>
