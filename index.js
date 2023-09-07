@@ -6,7 +6,7 @@ const path = require("path");
 
 const app = express();
 
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(morgan('common'));
 app.use(express.static('public'));
 
