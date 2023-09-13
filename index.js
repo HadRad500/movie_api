@@ -3,6 +3,11 @@ const path = require("path");
   bodyParser = require("body-parser");
   morgan = require("morgan");
   uuid = require("uuid");
+const mongoose = require('mongoose');
+const Models = require('./model.js');
+
+const Movies = Models.Movie;
+const Users = Models.User;
 
 const app = express();
 
@@ -10,41 +15,67 @@ app.use(express.json());
 app.use(morgan('common'));
 app.use(express.static('public'));
 
+mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
+
+
 let users = [
   {
-    id: 1,
-    name: "Ryan",
-    favoriteMovies: []
+    Username : "cm500",
+    Password : "1234",
+    Email : "hottomato@yahoo.com",
+    Birthday : new Date("1994-01-17"),
   },
 
   {
-    id: 2,
-    name: "Pam",
-    favoriteMovies: []
+    Username : "HadRad",
+    Password : "12345",
+    Email : "hotmop@yahoo.com",
+    Birthday : new Date("1991-05-11"),
   },
+
+  {
+    Username : "BigBaz74",
+    Password : "123456",
+    Email : "hotlemon@yahoo.com",
+    Birthday : new Date("1997-03-18"),
+  },
+
+  {
+    "Username" : "Arcane90",
+    "Password" : "1234567",
+    "Email" : "hotpopcorn@yahoo.com",
+    Birthday : new Date("1990-09-27"),
+  },
+
+  {
+    "Username" : "huevos77",
+    "Password" : "12345678",
+    "Email" : "hotcotton@yahoo.com",
+    Birthday : new Date("1989-10-23"),
+  }
 ]
 
 let movies = [
 
   {
-    "Title" : "Get Shorty",
-    "Description" : "The story follows a Miami mobster who goes to LA to collect some outstanding debts, and in the process becomes a movie producer.",
-    "Genre" : {
-      "Name" : "Comedy",
-      "Description" : "a genre of fiction that consists of discourses or works intended to be humorous or amusing by inducing laughter",
+    Title : "Get Shorty",
+    Description : "The story follows a Miami mobster who goes to LA to collect some outstanding debts, and in the process becomes a movie producer.",
+    Genre : {
+      Name : "Comedy",
+      Description : "a genre of fiction that consists of discourses or works intended to be humorous or amusing by inducing laughter",
     },  
-    "Director" : {
-      "Name" : "Barry Sonnenfeld",
-      "Bio" : "Barry Sonnenfeld is an American filmmaker and television director. He originally worked as a cinematographer for the Coen brothers before directing films such as The Addams Family and its sequel Addams Family Values, Get Shorty, the Men in Black trilogy, and Wild Wild West",
-      "Birth" : "1953"
+    Director : {
+      Name : "Barry Sonnenfeld",
+      Bio : "Barry Sonnenfeld is an American filmmaker and television director. He originally worked as a cinematographer for the Coen brothers before directing films such as The Addams Family and its sequel Addams Family Values, Get Shorty, the Men in Black trilogy, and Wild Wild West",
+      Birth : "1953"
     },
 
   },
   
   {
-    "Title" : "Wall-E",
-    "Description" : "WALL-E, short for Waste Allocation Load Lifter Earth-class, is the last robot left on Earth. He spends his days tidying up the planet, one piece of garbage at a time.",
-    "Genre" : {
+    Title : "Wall-E",
+    Description : "WALL-E, short for Waste Allocation Load Lifter Earth-class, is the last robot left on Earth. He spends his days tidying up the planet, one piece of garbage at a time.",
+    Genre : {
       "Name" : "Animated",
       "Description" : "a genre of Animation is a method in which pictures are manipulated to appear as moving images.",
     },  
@@ -52,9 +83,9 @@ let movies = [
       "Name" : "Andrew Stanton",
       "Bio" : "Andrew Stanton is an American filmmaker and voice actor based at Pixar, which he joined in 1990",
       "Birth" : "1965"
-    }
-  },
-
+    },
+  }, 
+  
   {
     "Title" : "Dune",
     "Description" : "Paul Atreides, a brilliant and gifted young man born into a great destiny beyond his understanding, must travel to the most dangerous planet in the universe to ensure the future of his family and his people.",
@@ -66,7 +97,9 @@ let movies = [
       "Name" : "Denis Villeneuve",
       "Bio" : "Denis Villeneuve OC CQ RCA is a Canadian filmmaker. He is a four-time recipient of the Canadian Screen Award for Best Direction, winning for Maelström in 2001, Polytechnique in 2009, Incendies in 2010 and Enemy in 2013.",
       "Birth" : "1967"
-    }
+    },
+    "ImagePath" : "Dune.png",
+    "Featured" : "True",
   },
 
   {
@@ -80,8 +113,11 @@ let movies = [
       "Name" : "Matt Reeves",
       "Bio" : "Matt Reeves is an American filmmaker who first gained recognition for the WB drama series Felicity, which he co-created with J. J. Abrams. Reeves came to widespread attention for directing the hit monster film Cloverfield.",
       "Birth" : "1966"
-    }
+    },
+    "ImagePath" : "Batman.png",
+    "Featured" : "False",
   },
+
   {
     "Title" : "Sherlock Holmes",
     "Description" : "When a string of brutal murders terrorizes London, it doesn't take long for legendary detective Sherlock Holmes and his crime-solving partner, Dr. Watson, to find the killer, Lord Blackwood.",
@@ -93,7 +129,9 @@ let movies = [
       "Name" : "Guy Ritchie",
       "Bio" : "Guy Stuart Ritchie is an English film director, producer and screenwriter. His work includes British gangster films, and the Sherlock Holmes films starring Robert Downey Jr. Ritchie left school at age 15 and worked entry-level jobs in the film industry before going on to direct television commercials.",
       "Birth" : "1968"
-    }
+    },
+    "ImagePath" : "Sherlock.png",
+    "Featured" : "True",
   },
 
   {
@@ -106,8 +144,10 @@ let movies = [
     "Director" : {
       "Name" : "Denis Villeneuve",
       "Bio" : "Denis Villeneuve OC CQ RCA is a Canadian filmmaker. He is a four-time recipient of the Canadian Screen Award for Best Direction, winning for Maelström in 2001, Polytechnique in 2009, Incendies in 2010 and Enemy in 2013.",
-      "Birth" : "1967"
-    }
+      "Birth" : "1967",
+      "ImagePath" : "Arrivals.png",
+      "Featured" : "True"
+    },
   },
 
   {
@@ -121,7 +161,9 @@ let movies = [
       "Name" : "Stephen Sommers",
       "Bio" : "Stephen Sommers is an American filmmaker, best known for big-budget action movies, such as The Mummy, its sequel, The Mummy Returns, Van Helsing, and G.I. Joe: The Rise of Cobra.",
       "Birth" : "1962"
-    }
+    },
+    "ImagePath" : "oddThomas.png",
+    "Featured" : "True",
   },
 
   {
@@ -135,7 +177,9 @@ let movies = [
       "Name" : "John Avildsen",
       "Bio" : "John Guilbert Avildsen was an American film director. He is best known for directing Rocky, which earned him the Academy Award for Best Director. He is also renowned for directing the first three films in The Karate Kid franchise.",
       "Birth" : "1935"
-    }
+    },
+    "ImagePath" : "karateKid.png",
+    "Featured" : "False",
   },
 
   {
@@ -149,7 +193,9 @@ let movies = [
       "Name" : "Sam Hargrave",
       "Bio" : "Sam Hargrave is an American stunt coordinator, stuntman, actor, and director. He is best known for his collaborations with the Russo brothers, including being the stunt coordinator for several films in the Marvel Cinematic Universe. The pair also wrote and produced Hargrave's directorial debut, Extraction.",
       "Birth" : "1984"
-    }
+    },
+    "ImagePath" : "Extraction.png",
+    "Featured" : "True",
   },
 
   {
@@ -163,27 +209,43 @@ let movies = [
       "Name" : "Guy Ritchie",
       "Bio" : "Guy Stuart Ritchie is an English film director, producer and screenwriter. His work includes British gangster films, and the Sherlock Holmes films starring Robert Downey Jr. Ritchie left school at age 15 and worked entry-level jobs in the film industry before going on to direct television commercials.",
       "Birth" : "1968"
-    }
-  },
+    },
+    "ImagePath" : "Uncle.png",
+    "Featured" : "False"
+  }
 ];
 
 //Create
-app.post('/users', (req, res) => {
-  const newUser = req.body;
 
-  if (newUser.name) {
-    newUser.id = uuid.v4();
-    users.push(newUser);
-    res.status(201).json(newUser);
-  } else {
-      res.status(400).send('user needs name')
-  }
-
+app.post('/users', async (req, res) => {
+  await Users.findOne({ Username: req.body.Username })
+    .then((user) => {
+      if (user) {
+        return res.status(400).send(req.body.Username + 'already exists');
+      } else {
+        Users
+          .create({
+            Username: req.body.Username,
+            Password: req.body.Password,
+            Email: req.body.Email,
+            Birthday: req.body.Birthday
+          })
+          .then((user) =>{res.status(201).json(user) })
+        .catch((error) => {
+          console.error(error);
+          res.status(500).send('Error: ' + error);
+        })
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send('Error: ' + error);
+    });
 });
 
 //UPDATE
 
-app.put('/users/:id', (req, res) => {
+/*app.put('/users/:id', (req, res) => {
   
   const {id} = req.params;
   const updatedUser = req.body;
@@ -197,7 +259,7 @@ app.put('/users/:id', (req, res) => {
     res.status(400).send('no such user')
   }
 
-});
+});*/
 
 //CREATE
 
@@ -235,7 +297,7 @@ app.delete('/users/:id/:movieTitle', (req, res) => {
 
 //DELETE
 
-app.delete('/users/:id', (req, res) => {
+/*app.delete('/users/:id', (req, res) => {
   
   const {id} = req.params;
 
@@ -248,48 +310,158 @@ app.delete('/users/:id', (req, res) => {
     res.status(400).send('no such user')
   }
 
+});*/
+
+//Delete by Username
+app.delete('/users/:Username', async (req, res) => {
+  await Users.findOneAndRemove({ Username: req.params.Username })
+    .then((user) => {
+      if (!user) {
+        res.status(400).send(req.params.Username + ' was not found');
+      } else {
+        res.status(200).send(req.params.Username + ' was deleted.');
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
+});
+
+//Read
+app.get('/users', async (req, res) => {
+  await Users.find()
+    .then((users) => {
+      res.status(201).json(users);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
+});
+
+//Read by Username
+app.get('/users/:Username', async (req, res) => {
+  await Users.findOne({ Username: req.params.Username })
+    .then((user) => {
+      res.json(user);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
+});
+
+//Update Username
+app.put('/users/:Username', async (req, res) => {
+  await Users.findOneAndUpdate({ Username: req.params.Username }, 
+    { 
+      $set:
+    {
+      Username: req.body.Username,
+      Password: req.body.Password,
+      Email: req.body.Email,
+      Birthday: req.body.Birthday
+    }
+  },
+  { new: true }) // This line makes sure that the updated document is returned
+  .then((updatedUser) => {
+    res.json(updatedUser);
+  })
+  .catch((err) => {
+    console.error(err);
+    res.status(500).send('Error: ' + err);
+  })
+
+});
+
+//Create a movie to favoritemovies
+app.post('/users/:Username/movies/:MovieID', async (req, res) => {
+  await Users.findOneAndUpdate({ Username: req.params.Username }, {
+     $push: { FavoriteMovies: req.params.MovieID }
+   },
+   { new: true }) // This line makes sure that the updated document is returned
+  .then((updatedUser) => {
+    res.json(updatedUser);
+  })
+  .catch((err) => {
+    console.error(err);
+    res.status(500).send('Error: ' + err);
+  });
+});
+
+//Delete a movie to favoritemovies
+app.delete('/users/:Username/movies/:MovieID', async (req, res) => {
+  await Users.findOneAndUpdate({ Username: req.params.Username }, {
+     $pull: { FavoriteMovies: req.params.MovieID }
+   },
+   { new: true }) // This line makes sure that the updated document is returned
+  .then((updatedUser) => {
+    res.json(updatedUser);
+  })
+  .catch((err) => {
+    console.error(err);
+    res.status(500).send('Error: ' + err);
+  });
 });
 
 //Read
 app.get('/movies', (req, res) => {
-  res.status(200).json(movies);
+  Movies.find()
+  .then((movies)=> {
+    res.status(201).json(movies);
+  })
+  .catch((err)=>{
+    console.error(err);
+    res.status(500).send("Error: "+ err);
+  });
 });
 
 //Read
-app.get('/movies/:title', (req, res) => {
-  const {title} = req.params;
-  const movie = movies.find(movie => movie.title === title );
-
-  if (movie) {
-    res.status(200).json(movie);
-  } else {
-    res.status(400).send('No Movie Cuz')
-  }
+app.get('/movies/:Title', (req, res) => {
+   Movies.findOne({ Title: req.params.Title })
+    .then((movie) => {
+      res.json(movie);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
 });
 
 //Read
-app.get('/movies/genre/:genreName', (req, res) => {
-  const {genreName} = req.params;
-  const genre = movies.find(movie => movie.Genre.Name === genreName ).Genre;
+app.get('/genre/:Name', (req, res) => {
+  Movies.findOne({'Genre.Name':req.params.Name})
+    .then((movie) => {
+    if (!movie) {
+      res.status(404).send(req.params.Name + ' Genre Does not exist');
+    } else {
+      res.json(movie.Genre.Description);
+    }})
 
-  if (genre) {
-    res.status(200).json(genre);
-  } else {
-    res.status(400).send('I don\'t understand this Genre')
-  }
+    .catch((err)=>{
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
+
 });
 
 //Read
-app.get('/movies/directors/:directorName', (req, res) => {
-  const {directorName} = req.params;
-  const director = movies.find(movie => movie.Director.Name === directorName ).Director;
-
-  if (director) {
-    res.status(200).json(director);
-  } else {
-    res.status(400).send('Who dis director')
-  }
-});
+app.get('/director/:Name', (req, res) => {
+  Movies.findOne({'Director.Name': req.params.Name})
+    .then((movie) => {
+      if (!movie) {
+        res.status(404).send(req.params.Name + ' Director does not exist');
+      } else {
+        res.json(movie.Director);
+      }})
+  
+      .catch((err)=>{
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+      });
+  
+  });
 
 app.get('/documentation.html', (req, res) => {
   res.sendFile(path.join(__dirname, "public", "documentation.html"));
