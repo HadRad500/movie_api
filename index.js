@@ -1,7 +1,6 @@
 const express = require("express");
-const path = require("path");
-  bodyParser = require("body-parser");
-  morgan = require("morgan");
+const path = require("path"),
+  morgan = require("morgan"),
   uuid = require("uuid");
 const mongoose = require('mongoose');
 const Models = require('./model.js');
@@ -12,9 +11,14 @@ const Users = Models.User;
 
 const app = express();
 
+const cors = require('cors');
+app.use(cors());
+
 let auth = require('./auth')(app);
 const passport = require('passport');
 require('./passport');
+
+const {check, validationResult} = require('express-validator');
 
 app.use(express.json());
 app.use(morgan('common'));
@@ -222,7 +226,18 @@ let movies = [
 
 //Create
 
-app.post('/users', async (req, res) => {
+app.post('/users', 
+[
+  check('Username', 'Username contains non-alphanumeric characters - not allowed.').isAlphanumeric(),
+  check('Password', 'Password is required').not().isEmpty(),
+], async (req, res) => {
+
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
+  let hashedPassword = Users.hashPassword(req.body.Password);
   await Users.findOne({ Username: req.body.Username })
     .then((user) => {
       if (user) {
@@ -231,7 +246,7 @@ app.post('/users', async (req, res) => {
         Users
           .create({
             Username: req.body.Username,
-            Password: req.body.Password,
+            Password: hashedPassword,
             Email: req.body.Email,
             Birthday: req.body.Birthday
           })
@@ -358,12 +373,21 @@ app.get('/users/:Username', async (req, res) => {
 });
 
 //Update Username
-app.put('/users/:Username', passport.authenticate('jwt', { session: false }), 
+app.put('/users/:Username', 
+[
+  check('Username', 'Username contains non-alphanumeric characters - not allowed.').isAlphanumeric(),
+  check('Password', 'Password is required').not().isEmpty(),
+],
+passport.authenticate('jwt', { session: false }), 
 async (req, res) => {
     //Condition to Check
     if(req.user.Username !== req.params.Username){
       return res.status(400).send('Permission Denied');
     }
+  let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+  }
     //Condition Ends
   await Users.findOneAndUpdate({ Username: req.params.Username }, 
     { 
