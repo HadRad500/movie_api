@@ -226,6 +226,11 @@ let movies = [
   }
 ];
 
+app.get("/", (request, response) => {
+	let responseText = "See you Space Cowboy...";
+	response.send(responseText);
+});
+
 //Create
 
 app.post('/users', 
