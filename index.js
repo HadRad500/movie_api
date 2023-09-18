@@ -24,7 +24,8 @@ app.use(express.json());
 app.use(morgan('common'));
 app.use(express.static('public'));
 
-mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
+//mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 
 let users = [
@@ -514,13 +515,13 @@ app.listen(port, '0.0.0.0', () => {
 
 
 
+//mongoimport --uri mongodb+srv://hadignasr:hTEEZAS1998@the-cluster.3skg7ti.mongodb.net/myFlixDB --collection users --type json --file ./dbexport/users.json
 
 
+//mongodb+srv://hadignasr:hTEEZAS1998@the-cluster.3skg7ti.mongodb.net/?retryWrites=true&w=majority&appName=AtlasApp
 
 
-
-
-
+//mongoexport --host="localhost:27017" --collection=users --db=myFlixDB --out=./dbexport/users.json
 
 
 
