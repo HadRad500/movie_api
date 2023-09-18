@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const path = require("path"),
   morgan = require("morgan"),
@@ -23,7 +24,7 @@ const {check, validationResult} = require('express-validator');
 app.use(express.json());
 app.use(morgan('common'));
 app.use(express.static('public'));
-
+console.log(process.env)
 //mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
