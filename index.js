@@ -47,7 +47,7 @@ app.post('/users',
       return res.status(422).json({ errors: errors.array() });
     }
 
-    let hashedPassword = Users.hashPassword(req.body.Password);
+    const hashedPassword = Users.hashPassword(req.body.Password);
     await Users.findOne({ Username: req.body.Username })
       .then((user) => {
         if (user) {
@@ -171,15 +171,29 @@ app.get('/users', async (req, res) => {
 });
 
 //Read by Username
-app.get('/users/:Username', async (req, res) => {
-  await Users.findOne({ Username: req.params.Username })
+app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
+  //Users.findOne({ Username: req.params.Username })
+  Users.findById(req.user._id)
+    .populate("FavoriteMovies")
     .then((user) => {
-      res.json(user);
+      if (!user) {
+        return res.status(404).json({})
+      }
+
+      return res.json(user);
     })
     .catch((err) => {
       console.error(err);
-      res.status(500).send('Error: ' + err);
+      res.status(400).send('Error: ' + err);
     });
+
+  // try{
+  //   const user = await Users.findOne({ Username: req.params.Username })
+  //  res.json(user);
+  // }catch(err){
+  //   console.error(err);
+  //   res.status(500).send('Error: ' + err);
+  // }
 });
 
 //Update Username
@@ -198,13 +212,14 @@ app.put('/users/:Username',
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });
     }
+
     //Condition Ends
-    await Users.findOneAndUpdate({ Username: req.params.Username },
+    Users.findOneAndUpdate({ Username: req.params.Username },
       {
         $set:
         {
           Username: req.body.Username,
-          Password: req.body.Password,
+          Password: Users.hashPassword(req.body.Password),
           Email: req.body.Email,
           Birthday: req.body.Birthday
         }
@@ -254,7 +269,7 @@ app.delete('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { se
 app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
   Movies.find()
     .then((movies) => {
-      res.status(201).json(movies);
+      res.status(200).json(movies);
     })
     .catch((err) => {
       console.error(err);
